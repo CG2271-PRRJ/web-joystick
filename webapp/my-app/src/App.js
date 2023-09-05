@@ -15,8 +15,8 @@ function App() {
 
     function startConnect(){
       let clientID = "clientID - "+parseInt(Math.random() * 100);
-      let host = "broker.hivemq.com"; 
-      let port = 8000;    
+      let host = "192.168.2.37"; 
+      let port = 9001;    
       var newcli = new Paho.Client(host,Number(port),clientID);
       newcli.onConnectionLost = onConnectionLost;
       newcli.connect({
@@ -96,6 +96,8 @@ function App() {
       }
 
       tcoeff = -1 + (angle / 90) * 2;
+      const TURN_DAMPENER_main = 0.5
+      const TURN_DAMPENER_alt = 0.5
       if (tcoeff === -1) {
           turn = -mov;
       } else if (tcoeff === 1) {
@@ -114,10 +116,16 @@ function App() {
           motor2 = mov;
       }
 
+      if (angle < 85) {
+            motor1 = motor1 * TURN_DAMPENER_main;
+            motor2 = motor2 * TURN_DAMPENER_main;
+      }
+
       // Reverse polarity
       if (ycoord < 0) {
-          motor1 = -motor1;
-          motor2 = -motor2;
+        let temp = motor1;
+          motor1 = -motor2;
+          motor2 = -temp;
       }
 
       motor1 = Math.round(motor1 / 100 * 7) + 7;
