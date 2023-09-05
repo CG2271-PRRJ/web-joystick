@@ -45,7 +45,7 @@ function App() {
 
 
     function myFunction() {
-      if (bignum === 112){return;}
+    //   if (bignum === 112){return;}
         
       // console.log("BIGNUM: " + bignum);
       if (client !== null && client.isConnected()) {
