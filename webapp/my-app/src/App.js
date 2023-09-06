@@ -103,7 +103,7 @@ function App() {
       } else if (tcoeff === 1) {
           turn = mov;
       } else {
-          turn = tcoeff * Math.abs(Math.abs(xcoord) - Math.abs(ycoord));
+          turn = tcoeff * mov;
           turn = Math.round(turn * 100) / 100;
       }
 
@@ -130,6 +130,8 @@ function App() {
 
       motor1 = Math.round(motor1 / 100 * 7) + 7;
       motor2 = Math.round(motor2 / 100 * 7) + 7;
+
+      console.log("motor 1: " + motor1, "motor 2: " + motor2);
 
       let number = motor1 * 15 + motor2;
 
