@@ -96,8 +96,8 @@ function App() {
       }
 
       tcoeff = -1 + (angle / 90) * 2;
-      const TURN_DAMPENER_main = 0.5
-      const TURN_DAMPENER_alt = 0.5
+      const TURN_DAMPENER_main = 0.7;
+    //   const TURN_DAMPENER_alt = 0.5
       if (tcoeff === -1) {
           turn = -mov;
       } else if (tcoeff === 1) {
@@ -123,9 +123,14 @@ function App() {
 
       // Reverse polarity
       if (ycoord < 0) {
-        let temp = motor1;
-          motor1 = -motor2;
-          motor2 = -temp;
+        //first reversal method
+        // let temp = motor1;
+        // motor1 = -motor2;
+        // motor2 = -temp;
+
+        //second reversal method
+        motor1 = -motor1;
+        motor2 = -motor2;
       }
 
       motor1 = Math.round(motor1 / 100 * 7) + 7;
