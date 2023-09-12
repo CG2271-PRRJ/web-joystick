@@ -159,7 +159,8 @@ function App() {
       <>
         <button onClick={startConnect}>Connect</button>
         <button onClick={disconnect}>disconnect</button>
-        <button onClick={() => setBignum(112)}>Stop</button>
+        <button onClick={() => setBignum(225)}>Normal Song</button>
+        <button onClick={() => setBignum(226)}>Alt Song</button>
         <p>
             Connected: 
             <span style={{ color: isConnected ? "green" : "red",
