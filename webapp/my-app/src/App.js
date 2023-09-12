@@ -15,7 +15,7 @@ function App() {
 
     function startConnect(){
       let clientID = "clientID - "+parseInt(Math.random() * 100);
-      let host = "192.168.2.37"; 
+      let host = "192.168.108.6"; 
       let port = 9001;    
       var newcli = new Paho.Client(host,Number(port),clientID);
       newcli.onConnectionLost = onConnectionLost;
@@ -26,12 +26,12 @@ function App() {
     }
 
     function onConnect(responseObject){
-      console.log("Connected!");
+    //   console.log("Connected!");
       setIsConnected(true);
     }
 
     function onConnectionLost(responseObject){
-        console.log("Connection Lost: "+responseObject.errorMessage);
+        // console.log("Connection Lost: "+responseObject.errorMessage);
         setIsConnected(false);
     }
 
@@ -45,19 +45,18 @@ function App() {
 
 
     function myFunction() {
-    //   if (bignum === 112){return;}
-        
-      // console.log("BIGNUM: " + bignum);
-      if (client !== null && client.isConnected()) {
-          let message = new Paho.Message(bignum.toString());
-          message.destinationName = "joystick/value";
-          client.send(message);
-      }
-      // Removed the clearInterval line
+        if (client !== null && client.isConnected()) {
+            // Create a byte array with one element: bignum
+            let byteArray = new Uint8Array([bignum]);
+    
+            let message = new Paho.Message(byteArray.buffer);
+            message.destinationName = "joystick/value";
+            client.send(message);
+        }
     }
-
+    
     useEffect(() => {
-      const intervalID = setInterval(myFunction, 10); // Call every 1 second
+      const intervalID = setInterval(myFunction, 50); // Call every 1 second
 
       // Clean up the interval on component unmount
       return () => {
@@ -96,8 +95,8 @@ function App() {
       }
 
       tcoeff = -1 + (angle / 90) * 2;
-      const TURN_DAMPENER_main = 0.7;
-    //   const TURN_DAMPENER_alt = 0.5
+      const TURN_DAMPENER_main = 0.5;
+      const TURN_DAMPENER_alt = 0.5
       if (tcoeff === -1) {
           turn = -mov;
       } else if (tcoeff === 1) {
@@ -136,7 +135,7 @@ function App() {
       motor1 = Math.round(motor1 / 100 * 7) + 7;
       motor2 = Math.round(motor2 / 100 * 7) + 7;
 
-      console.log("motor 1: " + motor1, "motor 2: " + motor2);
+    //   console.log("motor 1: " + motor1, "motor 2: " + motor2);
 
       let number = motor1 * 15 + motor2;
 
@@ -149,8 +148,8 @@ function App() {
     const handleStop = (event) => {
         setX(0);
         setY(0);
-        console.log("STOPPED");
-        console.log(event)
+        // console.log("STOPPED");
+        // console.log(event)
         setBignum(112);
         // Reset the joystick by changing its key, which will force a re-render
         // setJoystickKey(Math.random());
@@ -159,8 +158,8 @@ function App() {
     return (
       <>
         <button onClick={startConnect}>Connect</button>
-        <button onClick={() => setBignum(112)}>Stop</button>
         <button onClick={disconnect}>disconnect</button>
+        <button onClick={() => setBignum(112)}>Stop</button>
         <p>
             Connected: 
             <span style={{ color: isConnected ? "green" : "red",
@@ -173,8 +172,8 @@ function App() {
         </p>
         <div className="joystick_div">
             <Joystick 
-                size={300} 
-                stickSize={100} 
+                size={200} 
+                stickSize={70} 
                 sticky={false} 
                 baseColor="lightgrey" 
                 stickColor="black" 
