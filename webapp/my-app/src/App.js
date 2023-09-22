@@ -8,7 +8,7 @@ function App() {
     // initiate useState for X, Y, and a key for the joystick
     const [x_val, setX] = useState(0);
     const [y_val, setY] = useState(0);
-    const [bignum, setBignum] = useState(112);
+    // const [bignum, setBignum] = useState(112);
     const [client, setClient] = useState(null);
     const [isConnected, setIsConnected] = useState(false);
 
@@ -43,124 +43,133 @@ function App() {
       }
     }
 
-
-    function myFunction() {
+    function sendNum(number) {
         if (client !== null && client.isConnected()) {
-            // Create a byte array with one element: bignum
-            let byteArray = new Uint8Array([bignum]);
-    
+            let byteArray = new Uint8Array([number]);
+
             let message = new Paho.Message(byteArray.buffer);
             message.destinationName = "joystick/value";
-            client.send(message);
+            client.send(message)
         }
     }
+
+    // function myFunction() {
+    //     if (client !== null && client.isConnected()) {
+    //         // Create a byte array with one element: bignum
+    //         let byteArray = new Uint8Array([bignum]);
     
-    useEffect(() => {
-      const intervalID = setInterval(myFunction, 50); // Call every 1 second
+    //         let message = new Paho.Message(byteArray.buffer);
+    //         message.destinationName = "joystick/value";
+    //         client.send(message);
+    //     }
+    // }
+    
+    // useEffect(() => {
+    //   const intervalID = setInterval(myFunction, 50); // Call every 1 second
 
-      // Clean up the interval on component unmount
-      return () => {
-          clearInterval(intervalID);
-      }
-    }, [bignum]); // Depend on bignum and client so the effect reruns when they change
+    //   // Clean up the interval on component unmount
+    //   return () => {
+    //       clearInterval(intervalID);
+    //   }
+    // }, [bignum]); // Depend on bignum and client so the effect reruns when they change
 
-    function handleMove(event) {
-      // console.log(event);
-      let xcoord = event.x * 100;
-      let ycoord = event.y * 100;
-      // console.log("X: " + xcoord);
-      // console.log("Y: " + ycoord);
+    // function handleMove(event) {
+    //   // console.log(event);
+    //   let xcoord = event.x * 100;
+    //   let ycoord = event.y * 100;
+    //   // console.log("X: " + xcoord);
+    //   // console.log("Y: " + ycoord);
       
-      let h = Math.sqrt(Math.pow(xcoord, 2) + Math.pow(ycoord, 2));
-      let rad, angle, mov, tcoeff, turn, motor1, motor2, bignum;
+    //   let h = Math.sqrt(Math.pow(xcoord, 2) + Math.pow(ycoord, 2));
+    //   let rad, angle, mov, tcoeff, turn, motor1, motor2, bignum;
 
-      if (h === 0) {
-          rad = 0;
-          angle = 0;
-      } else {
-          // Angle in radians
-          rad = Math.acos(Math.abs(xcoord) / h);
+    //   if (h === 0) {
+    //       rad = 0;
+    //       angle = 0;
+    //   } else {
+    //       // Angle in radians
+    //       rad = Math.acos(Math.abs(xcoord) / h);
 
-          // Angle in degrees
-          angle = rad * (180 / Math.PI);
-      }
+    //       // Angle in degrees
+    //       angle = rad * (180 / Math.PI);
+    //   }
 
-      mov = Math.max(Math.abs(xcoord), Math.abs(ycoord));
+    //   mov = Math.max(Math.abs(xcoord), Math.abs(ycoord));
 
-      // Adjust for 10-degree tolerance around major axes
-      if (((0 <= angle && angle < 5)) || Math.abs(ycoord) < 10) {
-          angle = 0;
-      } else if ((85 < angle && angle <= 90) || Math.abs(xcoord) < 10) {
-          angle = 90;
-      }
+    //   // Adjust for 10-degree tolerance around major axes
+    //   if (((0 <= angle && angle < 5)) || Math.abs(ycoord) < 10) {
+    //       angle = 0;
+    //   } else if ((85 < angle && angle <= 90) || Math.abs(xcoord) < 10) {
+    //       angle = 90;
+    //   }
 
-      tcoeff = -1 + (angle / 90) * 2;
-      const TURN_DAMPENER_main = 0.5;
-      const TURN_DAMPENER_alt = 0.5
-      if (tcoeff === -1) {
-          turn = -mov;
-      } else if (tcoeff === 1) {
-          turn = mov;
-      } else {
-          turn = tcoeff * mov;
-          turn = Math.round(turn * 100) / 100;
-      }
+    //   tcoeff = -1 + (angle / 90) * 2;
+    //   const TURN_DAMPENER_main = 0.5;
+    //   const TURN_DAMPENER_alt = 0.5
+    //   if (tcoeff === -1) {
+    //       turn = -mov;
+    //   } else if (tcoeff === 1) {
+    //       turn = mov;
+    //   } else {
+    //       turn = tcoeff * mov;
+    //       turn = Math.round(turn * 100) / 100;
+    //   }
 
-      // First and third quadrant
-      if ((xcoord >= 0 && ycoord >= 0) || (xcoord < 0 && ycoord < 0)) {
-          motor1 = mov;
-          motor2 = turn;
-      } else {
-          motor1 = turn;
-          motor2 = mov;
-      }
+    //   // First and third quadrant
+    //   if ((xcoord >= 0 && ycoord >= 0) || (xcoord < 0 && ycoord < 0)) {
+    //       motor1 = mov;
+    //       motor2 = turn;
+    //   } else {
+    //       motor1 = turn;
+    //       motor2 = mov;
+    //   }
 
-      if (angle < 85) {
-            motor1 = motor1 * TURN_DAMPENER_main;
-            motor2 = motor2 * TURN_DAMPENER_main;
-      }
+    //   if (angle < 85) {
+    //         motor1 = motor1 * TURN_DAMPENER_main;
+    //         motor2 = motor2 * TURN_DAMPENER_main;
+    //   }
 
-      // Reverse polarity
-      if (ycoord < 0) {
-        //first reversal method
-        // let temp = motor1;
-        // motor1 = -motor2;
-        // motor2 = -temp;
+    //   // Reverse polarity
+    //   if (ycoord < 0) {
+    //     //first reversal method
+    //     // let temp = motor1;
+    //     // motor1 = -motor2;
+    //     // motor2 = -temp;
 
-        //second reversal method
-        motor1 = -motor1;
-        motor2 = -motor2;
-      }
+    //     //second reversal method
+    //     motor1 = -motor1;
+    //     motor2 = -motor2;
+    //   }
 
-      motor1 = Math.round(motor1 / 100 * 7) + 7;
-      motor2 = Math.round(motor2 / 100 * 7) + 7;
+    //   motor1 = Math.round(motor1 / 100 * 7) + 7;
+    //   motor2 = Math.round(motor2 / 100 * 7) + 7;
 
-    //   console.log("motor 1: " + motor1, "motor 2: " + motor2);
+    // //   console.log("motor 1: " + motor1, "motor 2: " + motor2);
 
-      let number = motor1 * 15 + motor2;
+    //   let number = motor1 * 15 + motor2;
 
-      // motor1 = Math.floor(bignum / 15);
-      // motor2 = bignum % 15;
+    //   // motor1 = Math.floor(bignum / 15);
+    //   // motor2 = bignum % 15;
 
-      setBignum(number);
-    }
+    //   setBignum(number);
+    // }
 
-    const handleStop = (event) => {
-        setX(0);
-        setY(0);
-        // console.log("STOPPED");
-        // console.log(event)
-        setBignum(112);
-        // Reset the joystick by changing its key, which will force a re-render
-        // setJoystickKey(Math.random());
-    }
+    // const handleStop = (event) => {
+    //     setX(0);
+    //     setY(0);
+    //     // console.log("STOPPED");
+    //     // console.log(event)
+    //     setBignum(112);
+    //     // Reset the joystick by changing its key, which will force a re-render
+    //     // setJoystickKey(Math.random());
+    // }
 
     return (
       <>
         <button onClick={startConnect}>Connect</button>
         <button onClick={disconnect}>disconnect</button>
-        <button onClick={() => setBignum(225)}>Normal Song</button>
-        <button onClick={() => setBignum(226)}>Alt Song</button>
+        <button onClick={() => sendNum(225)} >Normal Song</button>
+        <button onClick={() => sendNum(226)}>Alt Song</button>
         <p>
             Connected: 
             <span style={{ color: isConnected ? "green" : "red",
@@ -171,7 +180,7 @@ function App() {
                 {isConnected ? "true" : "false"}
             </span>
         </p>
-        <div className="joystick_div">
+        {/* <div className="joystick_div">
             <Joystick 
                 size={200} 
                 stickSize={70} 
@@ -182,6 +191,14 @@ function App() {
                 stop={handleStop} 
                 pos={{x: x_val, y: y_val}} 
             />
+        </div> */}
+        <div>
+            <button className="movebutton" onTouchStart={() => sendNum (14)} onTouchEnd={() => sendNum(112)}>left</button>
+            <button className="movebutton" onTouchStart={() => sendNum (224)} onTouchEnd={() => sendNum(112)}>forward</button>
+            <button className="movebutton" onTouchStart={() => sendNum (0)} onTouchEnd={() => sendNum(112)}>reverse</button>
+            <button className="movebutton" onTouchStart={() => sendNum (210)} onTouchEnd={() => sendNum(112)}>right</button>
+            <button className="movebutton" onTouchStart={() => sendNum (112)} onTouchEnd={() => sendNum(112)}>stop</button>
+
         </div>
         </>
     );
