@@ -1,207 +1,260 @@
-import './App.css';
-import { Joystick } from 'react-joystick-component';
-import { useState,useEffect, useRef } from 'react';
-import Paho from 'paho-mqtt';
+import "./App.css";
+import { Joystick } from "react-joystick-component";
+import { useState, useEffect, useRef } from "react";
+import Paho from "paho-mqtt";
 
+const FORLEFTFAST = 134;
+const FORFAST = 224;
+const FORRIGHTFAST = 218;
 
-function App() {    
-    // initiate useState for X, Y, and a key for the joystick
-    const [x_val, setX] = useState(0);
-    const [y_val, setY] = useState(0);
-    // const [bignum, setBignum] = useState(112);
-    const [client, setClient] = useState(null);
-    const [isConnected, setIsConnected] = useState(false);
+const FORLEFT = 119;
+const FOR = 192;
+const FORRIGHT = 217;
 
+const LEFTFAST = 28;
+const LEFT = 56;
+const STOP = 112;
+const RIGHT = 168;
+const RIGHTFAST = 196;
 
-    function startConnect(){
-      let clientID = "clientID - "+parseInt(Math.random() * 100);
-      let host = "192.168.108.6"; 
-      let port = 9001;    
-      var newcli = new Paho.Client(host,Number(port),clientID);
-      newcli.onConnectionLost = onConnectionLost;
-      newcli.connect({
-          onSuccess: onConnect,
-      });
-      setClient(newcli);
-    }
+const REVLEFT = 105;
+const REV = 32;
+const REVRIGHT = 7;
 
-    function onConnect(responseObject){
-    //   console.log("Connected!");
-      setIsConnected(true);
-    }
+const REVLEFTFAST = 90;
+const REVFAST = 0;
+const REVRIGHTFAST = 6;
 
-    function onConnectionLost(responseObject){
-        // console.log("Connection Lost: "+responseObject.errorMessage);
-        setIsConnected(false);
-    }
+function App() {
+	// initiate useState for X, Y, and a key for the joystick
+	// const [bignum, setBignum] = useState(112);
+	const [client, setClient] = useState(null);
+	const [isConnected, setIsConnected] = useState(false);
+	const [left, setLeft] = useState(7);
+	const [right, setRight] = useState(7);
 
-    function disconnect(){
-      if (client !== null && client.isConnected()) {
-          client.disconnect();
-          setClient(null);
-          setIsConnected(false);
-      }
-    }
+	function startConnect() {
+		let clientID = "clientID - " + parseInt(Math.random() * 100);
+		let host = "192.168.108.6";
+		let port = 9001;
+		var newcli = new Paho.Client(host, Number(port), clientID);
+		newcli.onConnectionLost = onConnectionLost;
+		newcli.connect({
+			onSuccess: onConnect,
+		});
+		setClient(newcli);
+	}
 
-    function sendNum(number) {
-        if (client !== null && client.isConnected()) {
-            let byteArray = new Uint8Array([number]);
+	function onConnect(responseObject) {
+		//   console.log("Connected!");
+		setIsConnected(true);
+	}
 
-            let message = new Paho.Message(byteArray.buffer);
-            message.destinationName = "joystick/value";
-            client.send(message)
-        }
-    }
+	function onConnectionLost(responseObject) {
+		// console.log("Connection Lost: "+responseObject.errorMessage);
+		setIsConnected(false);
+	}
 
-    // function myFunction() {
-    //     if (client !== null && client.isConnected()) {
-    //         // Create a byte array with one element: bignum
-    //         let byteArray = new Uint8Array([bignum]);
-    
-    //         let message = new Paho.Message(byteArray.buffer);
-    //         message.destinationName = "joystick/value";
-    //         client.send(message);
-    //     }
-    // }
-    
-    // useEffect(() => {
-    //   const intervalID = setInterval(myFunction, 50); // Call every 1 second
+	function disconnect() {
+		if (client !== null && client.isConnected()) {
+			client.disconnect();
+			setClient(null);
+			setIsConnected(false);
+		}
+	}
 
-    //   // Clean up the interval on component unmount
-    //   return () => {
-    //       clearInterval(intervalID);
-    //   }
-    // }, [bignum]); // Depend on bignum and client so the effect reruns when they change
+	function sendNum(number) {
+		if (number < 0 || number > 255) {
+			return;
+		}
 
-    // function handleMove(event) {
-    //   // console.log(event);
-    //   let xcoord = event.x * 100;
-    //   let ycoord = event.y * 100;
-    //   // console.log("X: " + xcoord);
-    //   // console.log("Y: " + ycoord);
-      
-    //   let h = Math.sqrt(Math.pow(xcoord, 2) + Math.pow(ycoord, 2));
-    //   let rad, angle, mov, tcoeff, turn, motor1, motor2, bignum;
+		if (client !== null && client.isConnected()) {
+			let byteArray = new Uint8Array([number]);
 
-    //   if (h === 0) {
-    //       rad = 0;
-    //       angle = 0;
-    //   } else {
-    //       // Angle in radians
-    //       rad = Math.acos(Math.abs(xcoord) / h);
+			let message = new Paho.Message(byteArray.buffer);
+			message.destinationName = "joystick/value";
+			client.send(message);
+		}
+	}
 
-    //       // Angle in degrees
-    //       angle = rad * (180 / Math.PI);
-    //   }
-
-    //   mov = Math.max(Math.abs(xcoord), Math.abs(ycoord));
-
-    //   // Adjust for 10-degree tolerance around major axes
-    //   if (((0 <= angle && angle < 5)) || Math.abs(ycoord) < 10) {
-    //       angle = 0;
-    //   } else if ((85 < angle && angle <= 90) || Math.abs(xcoord) < 10) {
-    //       angle = 90;
-    //   }
-
-    //   tcoeff = -1 + (angle / 90) * 2;
-    //   const TURN_DAMPENER_main = 0.5;
-    //   const TURN_DAMPENER_alt = 0.5
-    //   if (tcoeff === -1) {
-    //       turn = -mov;
-    //   } else if (tcoeff === 1) {
-    //       turn = mov;
-    //   } else {
-    //       turn = tcoeff * mov;
-    //       turn = Math.round(turn * 100) / 100;
-    //   }
-
-    //   // First and third quadrant
-    //   if ((xcoord >= 0 && ycoord >= 0) || (xcoord < 0 && ycoord < 0)) {
-    //       motor1 = mov;
-    //       motor2 = turn;
-    //   } else {
-    //       motor1 = turn;
-    //       motor2 = mov;
-    //   }
-
-    //   if (angle < 85) {
-    //         motor1 = motor1 * TURN_DAMPENER_main;
-    //         motor2 = motor2 * TURN_DAMPENER_main;
-    //   }
-
-    //   // Reverse polarity
-    //   if (ycoord < 0) {
-    //     //first reversal method
-    //     // let temp = motor1;
-    //     // motor1 = -motor2;
-    //     // motor2 = -temp;
-
-    //     //second reversal method
-    //     motor1 = -motor1;
-    //     motor2 = -motor2;
-    //   }
-
-    //   motor1 = Math.round(motor1 / 100 * 7) + 7;
-    //   motor2 = Math.round(motor2 / 100 * 7) + 7;
-
-    // //   console.log("motor 1: " + motor1, "motor 2: " + motor2);
-
-    //   let number = motor1 * 15 + motor2;
-
-    //   // motor1 = Math.floor(bignum / 15);
-    //   // motor2 = bignum % 15;
-
-    //   setBignum(number);
-    // }
-
-    // const handleStop = (event) => {
-    //     setX(0);
-    //     setY(0);
-    //     // console.log("STOPPED");
-    //     // console.log(event)
-    //     setBignum(112);
-    //     // Reset the joystick by changing its key, which will force a re-render
-    //     // setJoystickKey(Math.random());
-    // }
-
-    return (
-      <>
-        <button onClick={startConnect}>Connect</button>
-        <button onClick={disconnect}>disconnect</button>
-        <button onClick={() => sendNum(225)} >Normal Song</button>
-        <button onClick={() => sendNum(226)}>Alt Song</button>
-        <p>
-            Connected: 
-            <span style={{ color: isConnected ? "green" : "red",
-            fontWeight: "bold",
-            fontSize: "1.2em"
-            
-            }}>
-                {isConnected ? "true" : "false"}
-            </span>
-        </p>
-        {/* <div className="joystick_div">
-            <Joystick 
-                size={200} 
-                stickSize={70} 
-                sticky={false} 
-                baseColor="lightgrey" 
-                stickColor="black" 
-                move={handleMove} 
-                stop={handleStop} 
-                pos={{x: x_val, y: y_val}} 
-            />
-        </div> */}
-        <div>
-            <button className="movebutton" onTouchStart={() => sendNum (14)} onTouchEnd={() => sendNum(112)}>left</button>
-            <button className="movebutton" onTouchStart={() => sendNum (224)} onTouchEnd={() => sendNum(112)}>forward</button>
-            <button className="movebutton" onTouchStart={() => sendNum (0)} onTouchEnd={() => sendNum(112)}>reverse</button>
-            <button className="movebutton" onTouchStart={() => sendNum (210)} onTouchEnd={() => sendNum(112)}>right</button>
-            <button className="movebutton" onTouchStart={() => sendNum (112)} onTouchEnd={() => sendNum(112)}>stop</button>
-
-        </div>
-        </>
-    );
+	return (
+		<>
+			<div className="top-container">
+				<div>
+					<button onClick={startConnect}>Connect</button>
+					<button onClick={disconnect}>disconnect</button>
+				</div>
+				<div>
+					<button onClick={() => sendNum(225)}>Normal Song</button>
+					<button onClick={() => sendNum(226)}>Alt Song</button>
+				</div>
+			</div>
+			<p>
+				Connected:
+				<span
+					style={{
+						color: isConnected ? "green" : "red",
+						fontWeight: "bold",
+						fontSize: "1.2em",
+					}}
+				>
+					{isConnected ? "true" : "false"}
+				</span>
+			</p>
+			<div className="center-container">
+				<div className="dpad">
+					<button
+						className="movebutton"
+						onTouchStart={() => sendNum(FORLEFTFAST)}
+						onTouchEnd={() => sendNum(STOP)}
+					>
+						for-left-fast
+					</button>
+					<button className="invisible"></button> {/* empty top-left */}
+					<button
+						className="movebutton"
+						onTouchStart={() => sendNum(FORFAST)}
+						onTouchEnd={() => sendNum(STOP)}
+					>
+						forward-fast
+					</button>
+					<button className="invisible"></button> {/* empty top-right */}
+					<button
+						className="movebutton"
+						onTouchStart={() => sendNum(FORRIGHTFAST)}
+						onTouchEnd={() => sendNum(STOP)}
+					>
+						for-right-fast
+					</button>
+					{/*  */}
+					<button className="invisible"></button>
+					<button
+						className="movebutton"
+						onTouchStart={() => sendNum(FORLEFT)}
+						onTouchEnd={() => sendNum(STOP)}
+					>
+						for-left
+					</button>
+					<button
+						className="movebutton"
+						onTouchStart={() => sendNum(FOR)}
+						onTouchEnd={() => sendNum(STOP)}
+					>
+						forward
+					</button>
+					<button
+						className="movebutton"
+						onTouchStart={() => sendNum(FORRIGHT)}
+						onTouchEnd={() => sendNum(STOP)}
+					>
+						for-right
+					</button>
+					<button className="invisible"></button>
+					{/*  */}
+					<button
+						className="movebutton"
+						onTouchStart={() => sendNum(LEFTFAST)}
+						onTouchEnd={() => sendNum(STOP)}
+					>
+						left-fast
+					</button>
+					<button
+						className="movebutton"
+						onTouchStart={() => sendNum(LEFT)}
+						onTouchEnd={() => sendNum(STOP)}
+					>
+						left
+					</button>
+					<button
+						className="movebutton"
+						onTouchStart={() => sendNum(STOP)}
+						onTouchEnd={() => sendNum(STOP)}
+					>
+						stop
+					</button>
+					<button
+						className="movebutton"
+						onTouchStart={() => sendNum(RIGHT)}
+						onTouchEnd={() => sendNum(STOP)}
+					>
+						right
+					</button>
+					<button
+						className="movebutton"
+						onTouchStart={() => sendNum(RIGHTFAST)}
+						onTouchEnd={() => sendNum(STOP)}
+					>
+						right-fast
+					</button>
+					{/*  */}
+					<button className="invisible"></button>
+					<button
+						className="movebutton"
+						onTouchStart={() => sendNum(REVLEFT)}
+						onTouchEnd={() => sendNum(STOP)}
+					>
+						rev-left
+					</button>
+					<button
+						className="movebutton"
+						onTouchStart={() => sendNum(REV)}
+						onTouchEnd={() => sendNum(STOP)}
+					>
+						reverse
+					</button>
+					<button
+						className="movebutton"
+						onTouchStart={() => sendNum(REVRIGHT)}
+						onTouchEnd={() => sendNum(STOP)}
+					>
+						rev-right
+					</button>
+					<button className="invisible"></button>
+					{/*  */}
+					<button
+						className="movebutton"
+						onTouchStart={() => sendNum(REVLEFTFAST)}
+						onTouchEnd={() => sendNum(STOP)}
+					>
+						rev-left-fast
+					</button>
+					<button className="invisible"></button> {/* empty top-left */}
+					<button
+						className="movebutton"
+						onTouchStart={() => sendNum(REVFAST)}
+						onTouchEnd={() => sendNum(STOP)}
+					>
+						reverse-fast
+					</button>
+					<button className="invisible"></button> {/* empty top-right */}
+					<button
+						className="movebutton"
+						onTouchStart={() => sendNum(REVRIGHTFAST)}
+						onTouchEnd={() => sendNum(STOP)}
+					>
+						rev-right-fast
+					</button>
+				</div>
+			</div>
+			<div>
+				<input
+					type="number"
+					onChange={(e) => setLeft(Number(e.target.value))}
+				/>
+				<input
+					type="number"
+					onChange={(e) => setRight(Number(e.target.value))}
+				/>
+				<button
+					className="movebutton"
+					onTouchStart={() => sendNum(left * 15 + right)}
+					onTouchEnd={() => sendNum(STOP)}
+				>
+					Send Custom
+				</button>
+			</div>
+		</>
+	);
 }
 
 export default App;

@@ -1,13 +1,37 @@
+.top-container {
+  padding: 20px;
+  margin: 10px;
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  justify-content: space-between;
+}
 
-.joystick_div {
-  border: 5px solid;
-  border-radius: 50%;
-  position: absolute;
-  top: 50%;
-  left: 50%;
-  transform: translate(-50%, -50%);
+.center-container {
+  height: 50vh;
+  display: flex;
+  justify-content: center;
+  justify-items: center;
+}
+
+.dpad {
+  display: grid;
+  grid-template-columns: repeat(5, 1fr); /* simplified declaration for 5 equal columns */
+  gap: 10px;  /* spacing between the buttons */
+  /* max-width: 200px;  adjust as needed */
+  margin: 20px auto; /* center the D-pad */
+  padding: 20px;
 }
 
 .movebutton {
   user-select: none;
+  width: 100%; /* let the button take up the full width of its grid cell */
+  aspect-ratio: 1; /* this will make the height equal to its width, making the button square */
+  display: flex; /* to center the text within the button */
+  justify-content: center;
+  align-items: center;
+}
+
+/* Invisible buttons */
+.invisible {
+  visibility: hidden; /* hide button but keep its space */
 }
