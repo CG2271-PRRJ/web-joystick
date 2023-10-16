@@ -78,7 +78,7 @@ function App() {
 	}
 
 	return (
-		<>
+		<div classname='full-contatiner'>
 			<div className="top-container">
 				<div>
 					<button onClick={startConnect}>Connect</button>
@@ -102,14 +102,7 @@ function App() {
 				</span>
 			</p>
 			<div className="center-container">
-				<div className="dpad">
-					<button
-						className="movebutton"
-						onTouchStart={() => sendNum(FORLEFTFAST)}
-						onTouchEnd={() => sendNum(STOP)}
-					>
-						for-left-fast
-					</button>
+				<div className="dpadleft">
 					<button className="invisible"></button> {/* empty top-left */}
 					<button
 						className="movebutton"
@@ -118,46 +111,7 @@ function App() {
 					>
 						forward-fast
 					</button>
-					<button className="invisible"></button> {/* empty top-right */}
-					<button
-						className="movebutton"
-						onTouchStart={() => sendNum(FORRIGHTFAST)}
-						onTouchEnd={() => sendNum(STOP)}
-					>
-						for-right-fast
-					</button>
-					{/*  */}
-					<button className="invisible"></button>
-					<button
-						className="movebutton"
-						onTouchStart={() => sendNum(FORLEFT)}
-						onTouchEnd={() => sendNum(STOP)}
-					>
-						for-left
-					</button>
-					<button
-						className="movebutton"
-						onTouchStart={() => sendNum(FOR)}
-						onTouchEnd={() => sendNum(STOP)}
-					>
-						forward
-					</button>
-					<button
-						className="movebutton"
-						onTouchStart={() => sendNum(FORRIGHT)}
-						onTouchEnd={() => sendNum(STOP)}
-					>
-						for-right
-					</button>
-					<button className="invisible"></button>
-					{/*  */}
-					<button
-						className="movebutton"
-						onTouchStart={() => sendNum(LEFTFAST)}
-						onTouchEnd={() => sendNum(STOP)}
-					>
-						left-fast
-					</button>
+					<button className="invisible"></button> {/* empty top-left */}
 					<button
 						className="movebutton"
 						onTouchStart={() => sendNum(LEFT)}
@@ -179,46 +133,7 @@ function App() {
 					>
 						right
 					</button>
-					<button
-						className="movebutton"
-						onTouchStart={() => sendNum(RIGHTFAST)}
-						onTouchEnd={() => sendNum(STOP)}
-					>
-						right-fast
-					</button>
-					{/*  */}
-					<button className="invisible"></button>
-					<button
-						className="movebutton"
-						onTouchStart={() => sendNum(REVLEFT)}
-						onTouchEnd={() => sendNum(STOP)}
-					>
-						rev-left
-					</button>
-					<button
-						className="movebutton"
-						onTouchStart={() => sendNum(REV)}
-						onTouchEnd={() => sendNum(STOP)}
-					>
-						reverse
-					</button>
-					<button
-						className="movebutton"
-						onTouchStart={() => sendNum(REVRIGHT)}
-						onTouchEnd={() => sendNum(STOP)}
-					>
-						rev-right
-					</button>
-					<button className="invisible"></button>
-					{/*  */}
-					<button
-						className="movebutton"
-						onTouchStart={() => sendNum(REVLEFTFAST)}
-						onTouchEnd={() => sendNum(STOP)}
-					>
-						rev-left-fast
-					</button>
-					<button className="invisible"></button> {/* empty top-left */}
+					<button className="invisible"></button> 
 					<button
 						className="movebutton"
 						onTouchStart={() => sendNum(REVFAST)}
@@ -226,17 +141,42 @@ function App() {
 					>
 						reverse-fast
 					</button>
-					<button className="invisible"></button> {/* empty top-right */}
+					<button className="invisible"></button> 
+				</div>
+
+				<div className="dpadright">
 					<button
 						className="movebutton"
-						onTouchStart={() => sendNum(REVRIGHTFAST)}
+						onTouchStart={() => sendNum(FORLEFT)}
 						onTouchEnd={() => sendNum(STOP)}
 					>
-						rev-right-fast
+						forward-left
+					</button>
+					<button
+						className="movebutton"
+						onTouchStart={() => sendNum(FORRIGHT)}
+						onTouchEnd={() => sendNum(STOP)}
+					>
+						forward-right
+					</button>
+					<button
+						className="movebutton"
+						onTouchStart={() => sendNum(REVLEFT)}
+						onTouchEnd={() => sendNum(STOP)}
+					>
+						reverse-left
+					</button>
+				
+					<button
+						className="movebutton"
+						onTouchStart={() => sendNum(REVRIGHT)}
+						onTouchEnd={() => sendNum(STOP)}
+					>
+						reverse-right
 					</button>
 				</div>
 			</div>
-			<div>
+			<div className="bottom-container">
 				<input
 					type="number"
 					onChange={(e) => setLeft(Number(e.target.value))}
@@ -246,14 +186,14 @@ function App() {
 					onChange={(e) => setRight(Number(e.target.value))}
 				/>
 				<button
-					className="movebutton"
+					className="custombutton"
 					onTouchStart={() => sendNum(left * 15 + right)}
 					onTouchEnd={() => sendNum(STOP)}
 				>
 					Send Custom
 				</button>
 			</div>
-		</>
+		</div>
 	);
 }
 
