@@ -35,7 +35,7 @@ function App() {
 
 	function startConnect() {
 		let clientID = "clientID - " + parseInt(Math.random() * 100);
-		let host = "192.168.108.6";
+		let host = "192.168.230.6";
 		let port = 9001;
 		var newcli = new Paho.Client(host, Number(port), clientID);
 		newcli.onConnectionLost = onConnectionLost;
@@ -78,7 +78,7 @@ function App() {
 	}
 
 	return (
-		<div classname='full-contatiner'>
+		<div classname="full-contatiner">
 			<div className="top-container">
 				<div>
 					<button onClick={startConnect}>Connect</button>
@@ -133,7 +133,7 @@ function App() {
 					>
 						right
 					</button>
-					<button className="invisible"></button> 
+					<button className="invisible"></button>
 					<button
 						className="movebutton"
 						onTouchStart={() => sendNum(REVFAST)}
@@ -141,7 +141,7 @@ function App() {
 					>
 						reverse-fast
 					</button>
-					<button className="invisible"></button> 
+					<button className="invisible"></button>
 				</div>
 
 				<div className="dpadright">
@@ -166,7 +166,7 @@ function App() {
 					>
 						reverse-left
 					</button>
-				
+
 					<button
 						className="movebutton"
 						onTouchStart={() => sendNum(REVRIGHT)}
