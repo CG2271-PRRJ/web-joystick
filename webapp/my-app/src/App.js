@@ -30,6 +30,7 @@ function App() {
 	// const [bignum, setBignum] = useState(112);
 	const [client, setClient] = useState(null);
 	const [isConnected, setIsConnected] = useState(false);
+	const [commandStack, setCommandStack] = useState([]); // [1, 2, 3, 4, 5, 6, 7, 8, 9
 	const [left, setLeft] = useState(7);
 	const [right, setRight] = useState(7);
 
@@ -63,6 +64,26 @@ function App() {
 		}
 	}
 
+	function clearStack() {
+		setCommandStack([]);
+	}
+
+	function pushToStack(command) {
+		setCommandStack((prevStack) => [...prevStack, command]);
+	}
+
+	function popFromStack(command) {
+		setCommandStack((prevStack) => {
+			const index = prevStack.lastIndexOf(command);
+			if (index !== -1) {
+				const newStack = [...prevStack];
+				newStack.splice(index, 1);
+				return newStack;
+			}
+			return prevStack;
+		});
+	}
+
 	function sendNum(number) {
 		if (number < 0 || number > 255) {
 			return;
@@ -76,6 +97,16 @@ function App() {
 			client.send(message);
 		}
 	}
+
+	useEffect(() => {
+		// Transmit the command on top of the stack
+		const cmd =
+			commandStack.length > 0 ? commandStack[commandStack.length - 1] : STOP;
+		sendNum(cmd);
+
+		// Logging the updated stack
+		console.log("Updated command stack:", commandStack);
+	}, [commandStack]);
 
 	return (
 		<div classname="full-contatiner">
@@ -106,38 +137,38 @@ function App() {
 					<button className="invisible"></button> {/* empty top-left */}
 					<button
 						className="movebutton"
-						onTouchStart={() => sendNum(FORFAST)}
-						onTouchEnd={() => sendNum(STOP)}
+						onTouchStart={() => pushToStack(FORFAST)}
+						onTouchEnd={() => popFromStack(FORFAST)}
 					>
 						forward-fast
 					</button>
 					<button className="invisible"></button> {/* empty top-left */}
 					<button
 						className="movebutton"
-						onTouchStart={() => sendNum(LEFT)}
-						onTouchEnd={() => sendNum(STOP)}
+						onTouchStart={() => pushToStack(LEFT)}
+						onTouchEnd={() => popFromStack(LEFT)}
 					>
 						left
 					</button>
 					<button
 						className="movebutton"
-						onTouchStart={() => sendNum(STOP)}
-						onTouchEnd={() => sendNum(STOP)}
+						onTouchStart={clearStack}
+						onTouchEnd={clearStack}
 					>
 						stop
 					</button>
 					<button
 						className="movebutton"
-						onTouchStart={() => sendNum(RIGHT)}
-						onTouchEnd={() => sendNum(STOP)}
+						onTouchStart={() => pushToStack(RIGHT)}
+						onTouchEnd={() => popFromStack(RIGHT)}
 					>
 						right
 					</button>
 					<button className="invisible"></button>
 					<button
 						className="movebutton"
-						onTouchStart={() => sendNum(REVFAST)}
-						onTouchEnd={() => sendNum(STOP)}
+						onTouchStart={() => pushToStack(REVFAST)}
+						onTouchEnd={() => popFromStack(REVFAST)}
 					>
 						reverse-fast
 					</button>
@@ -147,30 +178,30 @@ function App() {
 				<div className="dpadright">
 					<button
 						className="movebutton"
-						onTouchStart={() => sendNum(FORLEFT)}
-						onTouchEnd={() => sendNum(STOP)}
+						onTouchStart={() => pushToStack(FORLEFT)}
+						onTouchEnd={() => popFromStack(FORLEFT)}
 					>
 						forward-left
 					</button>
 					<button
 						className="movebutton"
-						onTouchStart={() => sendNum(FORRIGHT)}
-						onTouchEnd={() => sendNum(STOP)}
+						onTouchStart={() => pushToStack(FORRIGHT)}
+						onTouchEnd={() => popFromStack(FORRIGHT)}
 					>
 						forward-right
 					</button>
 					<button
 						className="movebutton"
-						onTouchStart={() => sendNum(REVLEFT)}
-						onTouchEnd={() => sendNum(STOP)}
+						onTouchStart={() => pushToStack(REVLEFT)}
+						onTouchEnd={() => popFromStack(REVLEFT)}
 					>
 						reverse-left
 					</button>
 
 					<button
 						className="movebutton"
-						onTouchStart={() => sendNum(REVRIGHT)}
-						onTouchEnd={() => sendNum(STOP)}
+						onTouchStart={() => pushToStack(REVRIGHT)}
+						onTouchEnd={() => popFromStack(REVRIGHT)}
 					>
 						reverse-right
 					</button>
@@ -187,8 +218,8 @@ function App() {
 				/>
 				<button
 					className="custombutton"
-					onTouchStart={() => sendNum(left * 15 + right)}
-					onTouchEnd={() => sendNum(STOP)}
+					onTouchStart={() => pushToStack(left * 15 + right)}
+					onTouchEnd={() => popFromStack(left * 15 + right)}
 				>
 					Send Custom
 				</button>
