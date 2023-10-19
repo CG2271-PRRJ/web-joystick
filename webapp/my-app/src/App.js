@@ -105,7 +105,7 @@ function App() {
 		sendNum(cmd);
 
 		// Logging the updated stack
-		console.log("Updated command stack:", commandStack);
+		// console.log("Updated command stack:", commandStack);
 	}, [commandStack]);
 
 	return (
