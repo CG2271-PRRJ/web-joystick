@@ -98,6 +98,146 @@ function App() {
 		}
 	}
 
+	const handleForwardFastTouchStart = useCallback(() => {
+		pushToStack(FORFAST);
+	}, []);
+
+	const handleForwardFastTouchEnd = useCallback(() => {
+		popFromStack(FORFAST);
+	}, []);
+
+	const handleForwardLeftFastTouchStart = useCallback(() => {
+		pushToStack(FORLEFTFAST);
+	}, []);
+
+	const handleForwardLeftFastTouchEnd = useCallback(() => {
+		popFromStack(FORLEFTFAST);
+	}, []);
+
+	const handleForwardRightFastTouchStart = useCallback(() => {
+		pushToStack(FORRIGHTFAST);
+	}, []);
+
+	const handleForwardRightFastTouchEnd = useCallback(() => {
+		popFromStack(FORRIGHTFAST);
+	}, []);
+
+	const handleForwardTouchStart = useCallback(() => {
+		pushToStack(FOR);
+	}, []);
+
+	const handleForwardTouchEnd = useCallback(() => {
+		popFromStack(FOR);
+	}, []);
+
+	const handleForwardLeftTouchStart = useCallback(() => {
+		pushToStack(FORLEFT);
+	}, []);
+
+	const handleForwardLeftTouchEnd = useCallback(() => {
+		popFromStack(FORLEFT);
+	}, []);
+
+	const handleForwardRightTouchStart = useCallback(() => {
+		pushToStack(FORRIGHT);
+	}, []);
+
+	const handleForwardRightTouchEnd = useCallback(() => {
+		popFromStack(FORRIGHT);
+	}, []);
+
+	const handleLeftFastTouchStart = useCallback(() => {
+		pushToStack(LEFTFAST);
+	}, []);
+
+	const handleLeftFastTouchEnd = useCallback(() => {
+		popFromStack(LEFTFAST);
+	}, []);
+
+	const handleLeftTouchStart = useCallback(() => {
+		pushToStack(LEFT);
+	}, []);
+
+	const handleLeftTouchEnd = useCallback(() => {
+		popFromStack(LEFT);
+	}, []);
+
+	const handleStopTouchStartEnd = useCallback(() => {
+		clearStack();
+	}, []);
+
+	const handleRightTouchStart = useCallback(() => {
+		pushToStack(RIGHT);
+	}, []);
+
+	const handleRightTouchEnd = useCallback(() => {
+		popFromStack(RIGHT);
+	}, []);
+
+	const handleRightFastTouchStart = useCallback(() => {
+		pushToStack(RIGHTFAST);
+	}, []);
+
+	const handleRightFastTouchEnd = useCallback(() => {
+		popFromStack(RIGHTFAST);
+	}, []);
+
+	const handleReverseLeftFastTouchStart = useCallback(() => {
+		pushToStack(REVLEFTFAST);
+	}, []);
+
+	const handleReverseLeftFastTouchEnd = useCallback(() => {
+		popFromStack(REVLEFTFAST);
+	}, []);
+
+	const handleReverseRightFastTouchStart = useCallback(() => {
+		pushToStack(REVRIGHTFAST);
+	}, []);
+
+	const handleReverseRightFastTouchEnd = useCallback(() => {
+		popFromStack(REVRIGHTFAST);
+	}, []);
+
+	const handleReverseTouchStart = useCallback(() => {
+		pushToStack(REV);
+	}, []);
+
+	const handleReverseTouchEnd = useCallback(() => {
+		popFromStack(REV);
+	}, []);
+
+	const handleReverseLeftTouchStart = useCallback(() => {
+		pushToStack(REVLEFT);
+	}, []);
+
+	const handleReverseLeftTouchEnd = useCallback(() => {
+		popFromStack(REVLEFT);
+	}, []);
+
+	const handleReverseRightTouchStart = useCallback(() => {
+		pushToStack(REVRIGHT);
+	}, []);
+
+	const handleReverseRightTouchEnd = useCallback(() => {
+		popFromStack(REVRIGHT);
+	}, []);
+
+	const handleReverseFastTouchStart = useCallback(() => {
+		pushToStack(REVFAST);
+	}, []);
+
+	const handleReverseFastTouchEnd = useCallback(() => {
+		popFromStack(REVFAST);
+	}, []);
+
+	const handleNormalSong = useCallback(() => {
+		sendNum(225);
+	}, []);
+
+	const handleAltSong = useCallback(() => {
+		sendNum(226);
+	}, []);
+
 	useEffect(() => {
 		// Transmit the command on top of the stack
 		const cmd =
@@ -116,8 +256,8 @@ function App() {
 					<button onClick={disconnect}>disconnect</button>
 				</div>
 				<div>
-					<button onClick={() => sendNum(225)}>Normal Song</button>
-					<button onClick={() => sendNum(226)}>Alt Song</button>
+					<button onClick={handleNormalSong}>Normal Song</button>
+					<button onClick={handleAltSong}>Alt Song</button>
 				</div>
 			</div>
 			<p>
@@ -137,16 +277,16 @@ function App() {
 					<button className="invisible"></button> {/* empty top-left */}
 					<button
 						className="movebutton"
-						onTouchStart={() => pushToStack(FORFAST)}
-						onTouchEnd={() => popFromStack(FORFAST)}
+						onTouchStart={HandleForwardFastTouchStart}
+						onTouchEnd={HandleForwardFastTouchEnd}
 					>
 						forward-fast
 					</button>
 					<button className="invisible"></button> {/* empty top-left */}
 					<button
 						className="movebutton"
-						onTouchStart={() => pushToStack(LEFT)}
-						onTouchEnd={() => popFromStack(LEFT)}
+						onTouchStart={HandleLeftTouchStart}
+						onTouchEnd={HandleLeftTouchEnd}
 					>
 						left
 					</button>
@@ -159,16 +299,16 @@ function App() {
 					</button>
 					<button
 						className="movebutton"
-						onTouchStart={() => pushToStack(RIGHT)}
-						onTouchEnd={() => popFromStack(RIGHT)}
+						onTouchStart={HandleRightTouchStart}
+						onTouchEnd={HandleRightTouchEnd}
 					>
 						right
 					</button>
 					<button className="invisible"></button>
 					<button
 						className="movebutton"
-						onTouchStart={() => pushToStack(REVFAST)}
-						onTouchEnd={() => popFromStack(REVFAST)}
+						onTouchStart={HandleReverseFastTouchStart}
+						onTouchEnd={HandleReverseFastTouchEnd}
 					>
 						reverse-fast
 					</button>
@@ -178,30 +318,30 @@ function App() {
 				<div className="dpadright">
 					<button
 						className="movebutton"
-						onTouchStart={() => pushToStack(FORLEFT)}
-						onTouchEnd={() => popFromStack(FORLEFT)}
+						onTouchStart={HandleForwardLeftTouchStart}
+						onTouchEnd={HandleForwardLeftTouchEnd}
 					>
 						forward-left
 					</button>
 					<button
 						className="movebutton"
-						onTouchStart={() => pushToStack(FORRIGHT)}
-						onTouchEnd={() => popFromStack(FORRIGHT)}
+						onTouchStart={HandleForwardRightTouchStart}
+						onTouchEnd={HandleForwardRightTouchEnd}
 					>
 						forward-right
 					</button>
 					<button
 						className="movebutton"
-						onTouchStart={() => pushToStack(REVLEFT)}
-						onTouchEnd={() => popFromStack(REVLEFT)}
+						onTouchStart={HandleReverseLeftTouchStart}
+						onTouchEnd={HandleReverseLeftTouchEnd}
 					>
 						reverse-left
 					</button>
 
 					<button
 						className="movebutton"
-						onTouchStart={() => pushToStack(REVRIGHT)}
-						onTouchEnd={() => popFromStack(REVRIGHT)}
+						onTouchStart={HandleReverseRightTouchStart}
+						onTouchEnd={HandleReverseRightTouchEnd}
 					>
 						reverse-right
 					</button>
